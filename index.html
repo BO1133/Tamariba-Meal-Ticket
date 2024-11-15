@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamariba Meal Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.5s;
+        }
+        .content {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 300px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        #weekday {
+            font-size: 36px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        #date, #time {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        #useButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        #useButton:hover {
+            background-color: #45a049;
+        }
+        #usedMessage {
+            color: red;
+            font-weight: bold;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .usedInfo {
+            color: red;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .issuedInfo {
+            color: #666;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div id="ticketContent">
+            <h1>Tamariba Meal Ticket</h1>
+            <p id="weekday"></p>
+            <p id="date"></p>
+            <p id="time"></p>
+            <button id="useButton">Use Ticket</button>
+        </div>
+        <div id="usedContent" style="display: none;">
+            <h1>Tamariba Meal Ticket</h1>
+            <p id="usedMessage">TICKET USED</p>
+            <p class="issuedInfo">Issued:</p>
+            <p id="issuedTime" class="issuedInfo"></p>
+            <p class="usedInfo">Used:</p>
+            <p id="usedTime" class="usedInfo"></p>
+        </div>
+    </div>
+    <script>
+        // Get DOM elements
+        const ticketContent = document.getElementById('ticketContent');
+        const usedContent = document.getElementById('usedContent');
+        const weekdayElement = document.getElementById('weekday');
+        const dateElement = document.getElementById('date');
+        const timeElement = document.getElementById('time');
+        const useButton = document.getElementById('useButton');
+        const issuedTimeElement = document.getElementById('issuedTime');
+        const usedTimeElement = document.getElementById('usedTime');
+
+        // Set background color based on day
+        const dailyColors = {
+            0: '#FFE5E5', // Sunday
+            1: '#FFF4E5', // Monday
+            2: '#FFFBE5', // Tuesday
+            3: '#E5FFE8', // Wednesday
+            4: '#E5F6FF', // Thursday
+            5: '#F2E5FF', // Friday
+            6: '#FFE5F6'  // Saturday
+        };
+
+        // Format the current time
+        const now = new Date();
+        const issuedTimeStr = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: true 
+        });
+        const issuedDateStr = now.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        const fullIssuedTime = `${issuedDateStr} at ${issuedTimeStr}`;
+
+        // Set initial display
+        document.body.style.backgroundColor = dailyColors[now.getDay()];
+        weekdayElement.textContent = now.toLocaleDateString('en-US', { weekday: 'long' });
+        dateElement.textContent = issuedDateStr;
+        timeElement.textContent = issuedTimeStr;
+
+        // Handle button click
+        useButton.addEventListener('click', function() {
+            const usedAt = new Date();
+            const usedTimeString = `${usedAt.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })} at ${usedAt.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true 
+            })}`;
+
+            ticketContent.style.display = 'none';
+            usedContent.style.display = 'block';
+            issuedTimeElement.textContent = fullIssuedTime;
+            usedTimeElement.textContent = usedTimeString;
+        });
+    </script>
+</body>
+</html>
