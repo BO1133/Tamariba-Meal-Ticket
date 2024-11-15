@@ -30,8 +30,14 @@
             margin: 10px 0;
             font-weight: bold;
         }
-        #date {
+        #date, #time {
             font-size: 18px;
+            margin: 5px 0;
+        }
+        #expired {
+            display: none;
+            color: red;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -40,11 +46,15 @@
         <h1>Tamariba Meal Ticket</h1>
         <p id="weekday"></p>
         <p id="date"></p>
+        <p id="time"></p>
+        <p id="expired">Ticket Expired! Please refresh the page.</p>
     </div>
     <script>
         const weekdayElement = document.getElementById('weekday');
         const dateElement = document.getElementById('date');
-        const today = new Date();
+        const timeElement = document.getElementById('time');
+        const expiredElement = document.getElementById('expired');
+        const content = document.querySelector('.content');
         
         const dailyColors = {
             0: '#FFE5E5', // Sunday - Light Red
@@ -55,11 +65,50 @@
             5: '#F2E5FF', // Friday - Light Purple
             6: '#FFE5F6'  // Saturday - Light Pink
         };
-        
-        document.body.style.backgroundColor = dailyColors[today.getDay()];
-        
-        weekdayElement.textContent = today.toLocaleDateString('en-US', { weekday: 'long' });
-        dateElement.textContent = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        const now = new Date();
+        const clickTime = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: true 
+        });
+
+        // Display initial time and date
+        document.body.style.backgroundColor = dailyColors[now.getDay()];
+        weekdayElement.textContent = now.toLocaleDateString('en-US', { weekday: 'long' });
+        dateElement.textContent = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        timeElement.textContent = clickTime;
+
+        // Set expiration time (1 hour from page load)
+        const expirationTime = now.getTime() + (60 * 60 * 1000);
+
+        function checkExpiration() {
+            if (new Date().getTime() > expirationTime) {
+                content.children[0].style.display = 'none'; // Hide title
+                weekdayElement.style.display = 'none';
+                dateElement.style.display = 'none';
+                timeElement.style.display = 'none';
+                expiredElement.style.display = 'block';
+                return true;
+            }
+            return false;
+        }
+
+        // Check expiration every minute
+        setInterval(checkExpiration, 60000);
+
+        // Store expiration time in sessionStorage
+        sessionStorage.setItem('ticketExpiration', expirationTime);
+
+        // Check if ticket was already expired
+        if (sessionStorage.getItem('ticketExpired') === 'true') {
+            checkExpiration();
+        }
+
+        // Set expired flag in sessionStorage when window is closed or refreshed
+        window.onbeforeunload = () => {
+            sessionStorage.setItem('ticketExpired', 'true');
+        };
     </script>
 </body>
 </html>
