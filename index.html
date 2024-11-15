@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamariba Meal Ticket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.5s;
+        }
+        .content {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        #weekday {
+            font-size: 36px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        #date, #time {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        #expired {
+            display: none;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Tamariba Meal Ticket</h1>
+        <p id="weekday"></p>
+        <p id="date"></p>
+        <p id="time"></p>
+        <p id="expired">Ticket Expired! Please refresh the page.</p>
+    </div>
+    <script>
+        const weekdayElement = document.getElementById('weekday');
+        const dateElement = document.getElementById('date');
+        const timeElement = document.getElementById('time');
+        const expiredElement = document.getElementById('expired');
+        const content = document.querySelector('.content');
+        
+        const dailyColors = {
+            0: '#FFE5E5', // Sunday - Light Red
+            1: '#FFF4E5', // Monday - Light Orange
+            2: '#FFFBE5', // Tuesday - Light Yellow
+            3: '#E5FFE8', // Wednesday - Light Green
+            4: '#E5F6FF', // Thursday - Light Blue
+            5: '#F2E5FF', // Friday - Light Purple
+            6: '#FFE5F6'  // Saturday - Light Pink
+        };
+
+        const now = new Date();
+        const clickTime = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: true 
+        });
+
+        // Display initial time and date
+        document.body.style.backgroundColor = dailyColors[now.getDay()];
+        weekdayElement.textContent = now.toLocaleDateString('en-US', { weekday: 'long' });
+        dateElement.textContent = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        timeElement.textContent = clickTime;
+
+        // Set expiration time (1 hour from page load)
+        const expirationTime = now.getTime() + (60 * 60 * 1000);
+
+        function checkExpiration() {
+            if (new Date().getTime() > expirationTime) {
+                content.children[0].style.display = 'none'; // Hide title
+                weekdayElement.style.display = 'none';
+                dateElement.style.display = 'none';
+                timeElement.style.display = 'none';
+                expiredElement.style.display = 'block';
+                return true;
+            }
+            return false;
+        }
+
+        // Check expiration every minute
+        setInterval(checkExpiration, 60000);
+    </script>
+</body>
+</html>
